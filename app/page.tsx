@@ -3,53 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ArrowRight, BadgeCheck, Building2, ChevronRight, Mail, MapPin, Phone, Send, X } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Building2, ChevronRight, Mail, Phone, Quote, Send } from 'lucide-react';
 import { services, stats, testimonials, trustPoints } from '@/lib/data';
-
-// --- COMPONENTS ---
-
-// Простой Error Boundary для предотвращения падения всего приложения
-function ErrorBoundary({ children }: { children: React.ReactNode }) {
-  return <>{children}</>; 
-}
-
-// Модальное окно (Lead Modal)
-function LeadModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const [submitted, setSubmitted] = useState(false);
-  if (!open) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-lg rounded-[2rem] border border-white/10 bg-[#0d1827] p-6 shadow-2xl md:p-8">
-        <button onClick={() => onOpenChange(false)} className="absolute right-4 top-4 text-slate-400 hover:text-white">
-          <X className="h-6 w-6" />
-        </button>
-        
-        {submitted ? (
-          <div className="py-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary">
-              <BadgeCheck className="h-8 w-8" />
-            </div>
-            <h2 className="text-2xl font-bold text-white">Заявка принята</h2>
-            <p className="mt-2 text-slate-400">Мы свяжемся с вами в ближайшее время.</p>
-          </div>
-        ) : (
-          <>
-            <h2 className="pr-8 text-2xl font-bold text-white md:text-3xl">Консультация по закупкам</h2>
-            <p className="mt-3 text-sm text-slate-400">Оставьте контакты, и мы перезвоним вам для уточнения задачи.</p>
-            <form className="mt-6 space-y-4" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
-              <input type="text" placeholder="Ваше имя" required className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-white outline-none focus:border-primary" />
-              <input type="text" placeholder="Телефон или Email" required className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-white outline-none focus:border-primary" />
-              <button type="submit" className="h-14 w-full rounded-2xl bg-primary text-sm font-bold text-slate-950 transition hover:bg-accent">
-                Отправить заявку
-              </button>
-            </form>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
+import { LeadModal } from '@/components/lead-modal';
+import { ErrorBoundary } from '@/components/error-boundary';
 
 // --- MAIN PAGE ---
 
@@ -89,6 +46,7 @@ export default function HomePage() {
       </header>
 
       <main>
+        <ErrorBoundary>
         {/* Hero Section: Оптимизирован для мобильных (текст 32px, кнопки w-full) */}
         <section className="relative flex min-h-screen items-center pt-24 pb-12 md:pt-32 md:pb-20">
           <div className="absolute inset-0 z-0">
@@ -194,6 +152,44 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Trust: причины доверять компании */}
+        <section id="trust" className="py-20 md:py-32">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold text-white md:text-5xl">Доверие</h2>
+              <p className="mt-4 text-base text-slate-400 md:text-lg">Почему клиенты обращаются к нам повторно.</p>
+            </div>
+
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
+              {trustPoints.map((point) => {
+                const Icon = point.icon;
+                return (
+                  <div key={point.title} className="rounded-[2rem] border border-white/10 bg-white/5 p-6 md:p-8">
+                    <Icon className="h-8 w-8 text-accent" />
+                    <h3 className="mt-4 text-lg font-bold text-white md:text-xl">{point.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-400 md:text-base">{point.description}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-16 grid gap-6 md:grid-cols-3">
+              {testimonials.map((testimonial) => (
+                <figure key={testimonial.id} className="rounded-[2rem] border border-white/5 bg-[#0f1a29] p-6 md:p-8">
+                  <Quote className="h-6 w-6 text-accent" />
+                  <blockquote className="mt-4 text-sm leading-relaxed text-slate-300 md:text-base">
+                    {testimonial.quote}
+                  </blockquote>
+                  <figcaption className="mt-6 border-t border-white/5 pt-4">
+                    <div className="font-bold text-white">{testimonial.name}</div>
+                    <div className="text-sm text-slate-500">{testimonial.role}</div>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Contacts: Удобные плитки для тапа */}
         <section id="contacts" className="bg-[#0c1625] py-20 md:py-32">
           <div className="container mx-auto px-4 md:px-6">
@@ -224,6 +220,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        </ErrorBoundary>
       </main>
 
       <footer className="border-t border-white/5 py-12 text-center text-sm text-slate-500">
