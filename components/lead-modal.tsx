@@ -19,12 +19,14 @@ export function LeadModal({ open, onOpenChange }: LeadModalProps) {
   const [form, setForm] = useState<FormState>(initialState);
   const [touched, setTouched] = useState<Record<keyof FormState, boolean>>({ name: false, contact: false });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!open) {
       setForm(initialState);
       setTouched({ name: false, contact: false });
       setSubmitted(false);
+      setSubmitting(false);
     }
   }, [open]);
 
@@ -52,8 +54,12 @@ export function LeadModal({ open, onOpenChange }: LeadModalProps) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setTouched({ name: true, contact: true });
-    if (!isValid) return;
-    setSubmitted(true);
+    if (!isValid || submitting) return;
+    setSubmitting(true);
+    setTimeout(() => {
+      setSubmitting(false);
+      setSubmitted(true);
+    }, 600);
   };
 
   if (!open) return null;
@@ -61,11 +67,11 @@ export function LeadModal({ open, onOpenChange }: LeadModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
       <div className="absolute inset-0" onClick={() => onOpenChange(false)} aria-hidden="true" />
-      <div className="backdrop-blur-panel relative z-10 w-full max-w-xl rounded-[2rem] border border-white/10 bg-[#0d1827]/95 p-6 shadow-soft md:p-8">
+      <div className="backdrop-blur-panel relative z-10 w-full max-w-xl rounded-4xl border border-white/10 bg-panel/95 p-6 shadow-soft md:p-8">
         <button
           type="button"
           onClick={() => onOpenChange(false)}
-          className="absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-slate-200 transition hover:border-primary hover:text-white"
+          className="absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-slate-200 transition hover:border-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
           aria-label="Закрыть форму"
         >
           <X className="h-5 w-5" />
@@ -96,7 +102,7 @@ export function LeadModal({ open, onOpenChange }: LeadModalProps) {
                 value={form.name}
                 onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
                 onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-white outline-none transition placeholder:text-slate-500 focus:border-primary"
+                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-white outline-none transition placeholder:text-slate-500 focus:border-primary focus-visible:ring-2 focus-visible:ring-accent/60"
               />
               {touched.name && errors.name ? <p className="text-sm text-rose-300">{errors.name}</p> : null}
             </div>
@@ -110,16 +116,17 @@ export function LeadModal({ open, onOpenChange }: LeadModalProps) {
                 value={form.contact}
                 onBlur={() => setTouched((prev) => ({ ...prev, contact: true }))}
                 onChange={(event) => setForm((prev) => ({ ...prev, contact: event.target.value }))}
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-white outline-none transition placeholder:text-slate-500 focus:border-primary"
+                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-white outline-none transition placeholder:text-slate-500 focus:border-primary focus-visible:ring-2 focus-visible:ring-accent/60"
               />
               {touched.contact && errors.contact ? <p className="text-sm text-rose-300">{errors.contact}</p> : null}
             </div>
 
             <button
               type="submit"
-              className="inline-flex h-14 w-full items-center justify-center rounded-2xl bg-primary px-6 text-sm font-semibold text-slate-950 transition hover:bg-accent"
+              disabled={submitting}
+              className="inline-flex h-14 w-full items-center justify-center rounded-2xl bg-primary px-6 text-sm font-bold text-slate-950 transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-primary"
             >
-              Оставить заявку
+              {submitting ? 'Отправляем…' : 'Оставить заявку'}
             </button>
           </form>
         )}
