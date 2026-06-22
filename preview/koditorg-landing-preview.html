@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КОДИТОРГ — сопровождение по 44-ФЗ и 223-ФЗ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a1320;
+    --bg-header: rgba(8,16,27,0.8);
+    --bg-modal: #0d1827;
+    --bg-card: #0f1a29;
+    --bg-section-alt: #0c1625;
+    --fg: #e5edf5;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-950: #020617;
+    --border-soft: rgba(159,176,195,0.16);
+    --white-10: rgba(255,255,255,0.10);
+    --white-5: rgba(255,255,255,0.05);
+    --primary: #5aa0d6;
+    --accent: #7dd3fc;
+    --shadow-soft: 0 20px 60px rgba(2, 12, 27, 0.35);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(90,160,214,0.10), transparent 28%),
+      linear-gradient(180deg, #09111d 0%, #0b1421 100%);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  ::selection { background: rgba(125, 211, 252, 0.25); }
+
+  .container { max-width: 80rem; margin: 0 auto; padding: 0 1rem; }
+  @media (min-width: 768px) { .container { padding: 0 1.5rem; } }
+
+  .icon { display: inline-block; vertical-align: middle; }
+
+  /* ---------- HEADER ---------- */
+  .site-header {
+    position: fixed; inset: 0 0 auto 0; z-index: 50;
+    border-bottom: 1px solid var(--white-5);
+    background: var(--bg-header);
+    backdrop-filter: blur(20px);
+  }
+  .site-header .container {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 4rem;
+  }
+  @media (min-width: 768px) { .site-header .container { height: 5rem; } }
+
+  .logo { display: flex; align-items: center; gap: 0.5rem; }
+  @media (min-width: 768px) { .logo { gap: 0.75rem; } }
+  .logo-badge {
+    display: flex; align-items: center; justify-content: center;
+    width: 2.25rem; height: 2.25rem; border-radius: 0.75rem;
+    border: 1px solid var(--white-10); background: var(--white-5);
+    color: var(--accent); flex: none;
+  }
+  @media (min-width: 768px) { .logo-badge { width: 2.75rem; height: 2.75rem; } }
+  .logo-text { display: flex; flex-direction: column; line-height: 1; }
+  .logo-text .name { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #fff; }
+  @media (min-width: 768px) { .logo-text .name { font-size: 0.875rem; } }
+  .logo-text .law { margin-top: 0.25rem; font-size: 10px; color: var(--slate-500); display: none; }
+  @media (min-width: 768px) { .logo-text .law { display: block; } }
+
+  .main-nav { display: none; gap: 1.5rem; font-size: 0.875rem; font-weight: 500; color: var(--slate-400); }
+  @media (min-width: 1024px) { .main-nav { display: flex; } }
+  .main-nav a:hover { color: #fff; }
+
+  .btn-header {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 2.75rem; padding: 0 1rem; border-radius: 999px;
+    background: var(--primary); color: var(--slate-950);
+    font-size: 0.75rem; font-weight: 700; transition: background .2s;
+  }
+  @media (min-width: 768px) { .btn-header { padding: 0 1.5rem; font-size: 0.875rem; } }
+  .btn-header:hover { background: var(--accent); }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative; display: flex; align-items: center;
+    min-height: 100vh; padding: 6rem 0 3rem;
+  }
+  @media (min-width: 768px) { .hero { padding: 8rem 0 5rem; } }
+  .hero-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+  .hero-bg .gradient { position: absolute; inset: 0;
+    background: linear-gradient(to bottom, var(--bg) 0%, rgba(10,19,32,0.8) 50%, var(--bg) 100%); }
+  .hero-bg .photo { position: absolute; inset: 0; opacity: 0.20; filter: grayscale(1); }
+  .hero-bg .photo img { width: 100%; height: 100%; object-fit: cover; }
+
+  .hero-inner { position: relative; z-index: 10; }
+  .hero-grid { display: grid; gap: 3rem; }
+  @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1.2fr 0.8fr; align-items: center; } }
+
+  .eyebrow {
+    display: inline-flex; margin-bottom: 1rem; border-radius: 999px;
+    border: 1px solid rgba(125,211,252,0.20); background: rgba(125,211,252,0.10);
+    padding: 0.3rem 0.75rem; font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent);
+  }
+  @media (min-width: 768px) { .eyebrow { font-size: 0.75rem; } }
+
+  .hero h1 {
+    margin: 0; font-weight: 700; line-height: 1.15; color: #fff;
+    font-size: 1.875rem; text-wrap: balance;
+  }
+  @media (min-width: 768px) { .hero h1 { font-size: 3.75rem; } }
+  @media (min-width: 1024px) { .hero h1 { font-size: 4.5rem; } }
+
+  .hero p.lead {
+    margin: 1.5rem 0 0; max-width: 36rem; color: var(--slate-400);
+    font-size: 1rem; line-height: 1.6;
+  }
+  @media (min-width: 768px) { .hero p.lead { font-size: 1.25rem; line-height: 1.5; } }
+
+  .hero-ctas { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  @media (min-width: 640px) { .hero-ctas { flex-direction: row; } }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    height: 3.5rem; padding: 0 2rem; border-radius: 999px;
+    background: var(--primary); color: var(--slate-950);
+    font-size: 0.875rem; font-weight: 700; transition: background .2s;
+  }
+  .btn-primary:hover { background: var(--accent); }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 3.5rem; padding: 0 2rem; border-radius: 999px;
+    border: 1px solid var(--white-10); background: var(--white-5);
+    color: #fff; font-size: 0.875rem; font-weight: 700; transition: background .2s;
+  }
+  .btn-ghost:hover { background: var(--white-10); }
+
+  .hero-aside {
+    border-radius: 2rem; border: 1px solid var(--white-10); background: var(--white-5);
+    padding: 1.5rem; backdrop-filter: blur(10px);
+  }
+  @media (min-width: 768px) { .hero-aside { padding: 2rem; } }
+  .hero-aside h3 { margin: 0; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--slate-400); }
+  .hero-aside ul { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 1.25rem; }
+  .hero-aside li { display: flex; gap: 0.75rem; font-size: 0.875rem; line-height: 1.6; }
+  @media (min-width: 768px) { .hero-aside li { font-size: 1rem; } }
+  .hero-aside .icon { color: var(--accent); flex: none; }
+
+  /* ---------- STATS ---------- */
+  .stats { border-top: 1px solid var(--white-5); border-bottom: 1px solid var(--white-5);
+    background: rgba(255,255,255,0.02); padding: 3rem 0; }
+  .stats-grid { display: grid; gap: 1.5rem; }
+  @media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+  .stat-card { border-radius: 1rem; border: 1px solid var(--white-5); background: var(--white-5);
+    padding: 1.5rem; text-align: center; }
+  @media (min-width: 768px) { .stat-card { text-align: left; } }
+  .stat-card .value { font-size: 1.5rem; font-weight: 700; color: #fff; }
+  @media (min-width: 768px) { .stat-card .value { font-size: 1.875rem; } }
+  .stat-card .label { margin-top: 0.25rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-500); }
+
+  /* ---------- SERVICES ---------- */
+  .services { padding: 5rem 0; }
+  @media (min-width: 768px) { .services { padding: 8rem 0; } }
+  .services-head { max-width: 48rem; }
+  .services-head h2 { margin: 0; font-size: 1.875rem; font-weight: 700; color: #fff; }
+  @media (min-width: 768px) { .services-head h2 { font-size: 3rem; } }
+  .services-head p { margin-top: 1rem; color: var(--slate-400); font-size: 1rem; }
+  @media (min-width: 768px) { .services-head p { font-size: 1.125rem; } }
+
+  .services-grid { margin-top: 3rem; display: grid; gap: 2rem; }
+  @media (min-width: 768px) { .services-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .service-card { display: flex; flex-direction: column; overflow: hidden;
+    border-radius: 2rem; border: 1px solid var(--white-10); background: var(--bg-card); }
+  .service-card .thumb { position: relative; height: 14rem; width: 100%; overflow: hidden; }
+  .service-card .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+  .service-card:hover .thumb img { transform: scale(1.05); }
+  .service-card .thumb .fade { position: absolute; inset: 0;
+    background: linear-gradient(to top, var(--bg-card), transparent); }
+  .service-card .body { flex: 1; display: flex; flex-direction: column; padding: 1.5rem; }
+  @media (min-width: 768px) { .service-card .body { padding: 2rem; } }
+  .service-card h3 { margin: 0; font-size: 1.25rem; font-weight: 700; color: #fff; }
+  @media (min-width: 768px) { .service-card h3 { font-size: 1.5rem; } }
+  .service-card p { margin: 0.75rem 0 0; flex: 1; font-size: 0.875rem; line-height: 1.6; color: var(--slate-400); }
+  @media (min-width: 768px) { .service-card p { font-size: 1rem; } }
+  .service-card .foot { margin-top: 1.5rem; display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--white-5); padding-top: 1.5rem; }
+  .service-card .price { font-size: 1.125rem; font-weight: 700; color: #fff; }
+  .service-card .discuss { display: flex; align-items: center; gap: 0.25rem; font-size: 0.875rem; font-weight: 700; color: var(--accent);
+    min-height: 44px; padding: 0 0.25rem; margin: 0 -0.25rem; }
+
+  /* ---------- CONTACTS ---------- */
+  .contacts { background: var(--bg-section-alt); padding: 5rem 0; }
+  @media (min-width: 768px) { .contacts { padding: 8rem 0; } }
+  .contacts-grid { display: grid; gap: 3rem; }
+  @media (min-width: 1024px) { .contacts-grid { grid-template-columns: 1fr 1fr; } }
+  .contacts-grid h2 { margin: 0; font-size: 1.875rem; font-weight: 700; color: #fff; }
+  @media (min-width: 768px) { .contacts-grid h2 { font-size: 3rem; } }
+  .contacts-grid > div:first-child > p { margin-top: 1.5rem; color: var(--slate-400); }
+
+  .contact-tiles { margin-top: 2.5rem; display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .contact-tiles { grid-template-columns: 1fr 1fr; } }
+  .contact-tile { display: flex; flex-direction: column; align-items: flex-start;
+    border-radius: 1rem; border: 1px solid var(--white-5); background: var(--white-5);
+    padding: 1.5rem; transition: border-color .2s; }
+  .contact-tile:hover { border-color: rgba(90,160,214,0.30); }
+  .contact-tile .icon { color: var(--accent); }
+  .contact-tile span { margin-top: 1rem; font-weight: 700; color: #fff; }
+
+  .cta-panel { border-radius: 2rem; background: var(--primary); color: var(--slate-950);
+    padding: 2rem; }
+  @media (min-width: 768px) { .cta-panel { padding: 3rem; } }
+  .cta-panel h3 { margin: 0; font-size: 1.5rem; font-weight: 700; }
+  @media (min-width: 768px) { .cta-panel h3 { font-size: 1.875rem; } }
+  .cta-panel p { margin-top: 1rem; font-weight: 500; opacity: 0.8; }
+  .btn-dark {
+    margin-top: 2rem; height: 3.5rem; width: 100%; border-radius: 999px;
+    background: var(--slate-950); color: #fff; font-size: 0.875rem; font-weight: 700;
+    transition: background .2s;
+  }
+  .btn-dark:hover { background: #1e293b; }
+
+  /* ---------- FOOTER ---------- */
+  .site-footer { border-top: 1px solid var(--white-5); padding: 3rem 0; text-align: center;
+    font-size: 0.875rem; color: var(--slate-500); }
+  .site-footer p.law { margin-top: 0.5rem; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; }
+
+  /* ---------- FLOATING BUTTON ---------- */
+  .fab {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 50;
+    display: flex; align-items: center; justify-content: center;
+    width: 3.5rem; height: 3.5rem; border-radius: 50%;
+    background: #229ED9; color: #fff; box-shadow: var(--shadow-soft);
+    transition: transform .15s;
+  }
+  @media (min-width: 768px) { .fab { width: 4rem; height: 4rem; } }
+  .fab:active { transform: scale(0.9); }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100; display: none;
+    align-items: center; justify-content: center;
+    background: rgba(2,6,23,0.80); backdrop-filter: blur(6px);
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    position: relative; width: 100%; max-width: 32rem;
+    border-radius: 2rem; border: 1px solid var(--white-10);
+    background: var(--bg-modal); padding: 1.5rem; box-shadow: var(--shadow-soft);
+  }
+  @media (min-width: 768px) { .modal-box { padding: 2rem; } }
+  .modal-close {
+    position: absolute; right: 0.5rem; top: 0.5rem; color: var(--slate-400);
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { color: #fff; }
+  .modal-box h2 { margin: 0; padding-right: 2.5rem; font-size: 1.5rem; font-weight: 700; color: #fff; }
+  @media (min-width: 768px) { .modal-box h2 { font-size: 1.875rem; } }
+  .modal-box p.hint { margin-top: 0.75rem; font-size: 0.875rem; color: var(--slate-400); }
+  .modal-form { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+  .modal-form input {
+    height: 3.5rem; width: 100%; border-radius: 1rem;
+    border: 1px solid var(--white-10); background: var(--white-5);
+    padding: 0 1rem; color: #fff; font-size: 0.95rem; outline: none;
+    font-family: inherit; transition: border-color .2s;
+  }
+  .modal-form input::placeholder { color: var(--slate-500); }
+  .modal-form input:focus { border-color: var(--primary); }
+  .modal-form button {
+    height: 3.5rem; width: 100%; border-radius: 1rem;
+    background: var(--primary); color: var(--slate-950);
+    font-size: 0.875rem; font-weight: 700; transition: background .2s;
+  }
+  .modal-form button:hover { background: var(--accent); }
+
+  .modal-success { padding: 2rem 0; text-align: center; }
+  .modal-success .check {
+    margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;
+    width: 4rem; height: 4rem; border-radius: 50%;
+    background: rgba(90,160,214,0.20); color: var(--primary);
+  }
+  .modal-success h2 { font-size: 1.5rem; font-weight: 700; color: #fff; margin: 0; }
+  .modal-success p { margin-top: 0.5rem; color: var(--slate-400); }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container">
+      <a href="#top" class="logo">
+        <span class="logo-badge">
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v18Z"/><path d="M6 12H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2"/><path d="M18 9h2a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-2"/><path d="M10 6h.01"/><path d="M14 6h.01"/><path d="M10 10h.01"/><path d="M14 10h.01"/><path d="M10 14h.01"/><path d="M14 14h.01"/><path d="M10 18h.01"/><path d="M14 18h.01"/></svg>
+        </span>
+        <span class="logo-text">
+          <span class="name">КОДИТОРГ</span>
+          <span class="law">44-ФЗ · 223-ФЗ</span>
+        </span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="#services">Услуги</a>
+        <a href="#trust">Доверие</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+
+      <button class="btn-header" onclick="openModal()">Консультация</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="hero-bg">
+        <div class="gradient"></div>
+        <div class="photo">
+          <img src="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?auto=format&fit=crop&q=80&w=1600" alt="">
+        </div>
+      </div>
+
+      <div class="container hero-inner">
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow">Сопровождение госзакупок</p>
+            <h1>Сопровождение по 44-ФЗ и 223-ФЗ для вашего бизнеса.</h1>
+            <p class="lead">Помогаем разобраться в требованиях, снизить риск ошибок в документах и сэкономить время на публикациях в ЕИС.</p>
+            <div class="hero-ctas">
+              <button class="btn-primary" onclick="openModal()">
+                Оставить заявку
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </button>
+              <a class="btn-ghost" href="tel:+79781227706">+7 978 122 7706</a>
+            </div>
+          </div>
+
+          <aside class="hero-aside">
+            <h3>Кому помогаем</h3>
+            <ul>
+              <li>
+                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.78 4.78 4 4 0 0 1-6.74 0 4 4 0 0 1-4.78-4.78 4 4 0 0 1 0-6.75Z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span>Предпринимателям на старте в госзакупках</span>
+              </li>
+              <li>
+                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.78 4.78 4 4 0 0 1-6.74 0 4 4 0 0 1-4.78-4.78 4 4 0 0 1 0-6.75Z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span>МСБ для расширения каналов сбыта</span>
+              </li>
+              <li>
+                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.78 4.78 4 4 0 0 1-6.74 0 4 4 0 0 1-4.78-4.78 4 4 0 0 1 0-6.75Z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span>Заказчикам по 44-ФЗ и 223-ФЗ</span>
+              </li>
+              <li>
+                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.78 4.78 4 4 0 0 1-6.74 0 4 4 0 0 1-4.78-4.78 4 4 0 0 1 0-6.75Z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span>Поставщикам для защиты от отклонений</span>
+              </li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="value">2 ключевых закона</div><div class="label">Фокус на 44-ФЗ и 223-ФЗ</div></div>
+          <div class="stat-card"><div class="value">6 направлений</div><div class="label">Основные сценарии помощи</div></div>
+          <div class="stat-card"><div class="value">Онлайн + Севастополь</div><div class="label">Формат поддержки</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services" id="services">
+      <div class="container">
+        <div class="services-head">
+          <h2>Услуги и поддержка</h2>
+          <p>Где ошибки стоят дороже всего — там мы обеспечим точность.</p>
+        </div>
+
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="thumb">
+              <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=1200&h=900" alt="Комплексное сопровождение закупок">
+              <div class="fade"></div>
+            </div>
+            <div class="body">
+              <h3>Комплексное сопровождение закупок</h3>
+              <p>Поддержка заказчиков и поставщиков по 44-ФЗ и 223-ФЗ: от планирования до закрытия процедуры.</p>
+              <div class="foot">
+                <span class="price">от 25 000 ₽ / месяц</span>
+                <button class="discuss" onclick="openModal()">Обсудить
+                  <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="thumb">
+              <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=1200&h=900" alt="Подготовка заявок и документов">
+              <div class="fade"></div>
+            </div>
+            <div class="body">
+              <h3>Подготовка заявок и документов</h3>
+              <p>Проверка требований, оформление пакета документов, снижение риска отклонения заявки.</p>
+              <div class="foot">
+                <span class="price">от 7 500 ₽ / процедура</span>
+                <button class="discuss" onclick="openModal()">Обсудить
+                  <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="thumb">
+              <img src="https://images.unsplash.com/photo-1562564055-71e051d33c19?auto=format&fit=crop&q=80&w=1200&h=900" alt="Публикации в ЕИС и процедурная поддержка">
+              <div class="fade"></div>
+            </div>
+            <div class="body">
+              <h3>Публикации в ЕИС и процедурная поддержка</h3>
+              <p>Размещение сведений, сопровождение изменений, помощь с публикациями и рабочими регламентами.</p>
+              <div class="foot">
+                <span class="price">от 12 000 ₽ / задача</span>
+                <button class="discuss" onclick="openModal()">Обсудить
+                  <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTS -->
+    <section class="contacts" id="contacts">
+      <div class="container">
+        <div class="contacts-grid">
+          <div>
+            <h2>Свяжитесь с нами</h2>
+            <p>Работаем по всей России. Офис в Севастополе. Отвечаем быстро в Telegram и по телефону.</p>
+
+            <div class="contact-tiles">
+              <a class="contact-tile" href="tel:+79781227706">
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.732 1.555l-.467.357a1 1 0 0 0-.302 1.214 14.97 14.97 0 0 0 6.331 6.332Z"/></svg>
+                <span>+7 978 122 7706</span>
+              </a>
+              <a class="contact-tile" href="mailto:devnukov@gmail.com">
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <span>devnukov@gmail.com</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="cta-panel">
+            <h3>Готовы начать?</h3>
+            <p>Оставьте короткую заявку, и мы предложим решение под ваш бюджет и сроки.</p>
+            <button class="btn-dark" onclick="openModal()">Записаться на консультацию</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> КОДИТОРГ. Все права защищены.</p>
+      <p class="law">Сопровождение 44-ФЗ и 223-ФЗ</p>
+    </div>
+  </footer>
+
+  <!-- FLOATING TELEGRAM BUTTON -->
+  <a class="fab" href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l4.514 1.73a2 2 0 0 1 1.174 1.176l1.730 4.516a.5.5 0 0 0 .024.937Z"/><path d="m21.854 2.147-10.94 10.939"/></svg>
+  </a>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()" aria-label="Закрыть">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+
+      <div id="modalForm">
+        <h2>Консультация по закупкам</h2>
+        <p class="hint">Оставьте контакты, и мы перезвоним вам для уточнения задачи.</p>
+        <form class="modal-form" onsubmit="submitForm(event)">
+          <input type="text" placeholder="Ваше имя" required>
+          <input type="text" placeholder="Телефон или Email" required>
+          <button type="submit">Отправить заявку</button>
+        </form>
+      </div>
+
+      <div id="modalSuccess" class="modal-success" style="display:none;">
+        <div class="check">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.78 4.78 4 4 0 0 1-6.74 0 4 4 0 0 1-4.78-4.78 4 4 0 0 1 0-6.75Z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <h2>Заявка принята</h2>
+        <p>Мы свяжемся с вами в ближайшее время.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('open');
+      document.getElementById('modalForm').style.display = 'block';
+      document.getElementById('modalSuccess').style.display = 'none';
+      document.querySelector('.modal-form').reset();
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+    function submitForm(e) {
+      e.preventDefault();
+      document.getElementById('modalForm').style.display = 'none';
+      document.getElementById('modalSuccess').style.display = 'block';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
